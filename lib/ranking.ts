@@ -14,6 +14,7 @@ export interface NgoRankingInput {
   raised: number;
   verifiedProofsCount: number;
   completedMilestonesCount: number;
+  totalMilestonesCount?: number;
 }
 
 export interface RankedNgo {
@@ -26,20 +27,19 @@ export interface RankedNgo {
   cap: number;
   raised: number;
   distanceKm: number;
+  score: number;
+  breakdown: { proximity: number; delivery: number; capUtilization: number; badgeBonus: number };
   scores: {
-    proximityScore: number;    // max 40
-    deliveryRateScore: number; // max 30
-    fundNeedScore: number;     // max 20
-    badgeScore: number;        // max 10
-    totalScore: number;        // max 100
+    proximityScore: number;
+    deliveryRateScore: number;
+    fundNeedScore: number;
+    badgeScore: number;
+    totalScore: number;
   };
   whyThisRank: string;
 }
 
-/**
- * Calculates priority score and ranking for NGOs responding to a disaster.
- * Turf.js is run server-side to calculate true geodesic distance.
- */
+/** Spec: proximity 40, delivery 30, cap utilization 20, badge +10 govt / +6 platform. */
 export function rankNgosForDisaster(
   disasterLat: number,
   disasterLng: number,
@@ -48,37 +48,24 @@ export function rankNgosForDisaster(
   const disasterPoint = point([disasterLng, disasterLat]);
 
   const scored = ngosData.map((item) => {
-    // 1. Distance via Turf.js (geodesic distance in kilometers)
-    const ngoPoint = point([item.baseLng, item.baseLat]);
-    const dist = Math.round(distance(disasterPoint, ngoPoint, { units: "kilometers" }));
+    const dist = distance(disasterPoint, point([item.baseLng, item.baseLat]), { units: "kilometers" });
 
-    // Proximity score (0 to 40 pts) - closer is higher
-    // < 50km: 40pts, < 150km: 32pts, < 300km: 24pts, < 600km: 15pts, else: 8pts
-    let proximityScore = 8;
-    if (dist < 50) proximityScore = 40;
-    else if (dist < 150) proximityScore = 32;
-    else if (dist < 300) proximityScore = 24;
-    else if (dist < 600) proximityScore = 15;
+    const proximity = Math.round(40 * Math.max(0, 1 - dist / 500));
 
-    // 2. Past delivery / verified proofs score (0 to 30 pts)
-    const deliveryScore = Math.min(30, (item.verifiedProofsCount * 10) + (item.completedMilestonesCount * 5));
+    const total = item.totalMilestonesCount ?? 0;
+    const deliveryRate = total > 0
+      ? item.completedMilestonesCount / total
+      : Math.min(1, item.verifiedProofsCount / 3);
+    const delivery = Math.round(30 * Math.min(1, Math.max(0, deliveryRate)));
 
-    // 3. Fund need / cap utilization score (0 to 20 pts)
-    // Avoids over-concentrating donations. If < 50% raised, highest need.
-    const utilization = item.cap > 0 ? (item.raised / item.cap) : (item.raised / (item.goal || 100000));
-    let fundNeedScore = 20;
-    if (utilization >= 0.95) fundNeedScore = 2; // nearly full cap
-    else if (utilization >= 0.75) fundNeedScore = 8;
-    else if (utilization >= 0.5) fundNeedScore = 14;
-    else fundNeedScore = 20;
+    const capBase = item.cap > 0 ? item.cap : item.goal > 0 ? item.goal : 100000;
+    const utilization = Math.min(1, Math.max(0, item.raised / capBase));
+    const capUtilization = Math.round(20 * (1 - utilization));
 
-    // 4. Badge score (0 to 10 pts)
-    const badgeScore = item.badge === "govt" ? 10 : 6;
+    const badgeBonus = item.badge === "govt" ? 10 : 6;
+    const totalScore = Math.min(100, proximity + delivery + capUtilization + badgeBonus);
 
-    const totalScore = Math.min(100, proximityScore + deliveryScore + fundNeedScore + badgeScore);
-
-    // Rule-based deterministic explanation
-    const whyThisRank = `${item.badge === "govt" ? "Government Accredited" : "Platform Verified"} NGO stationed ${dist} km from crisis epicenter. Has ${item.verifiedProofsCount} verified field deliveries on record with ${Math.round(utilization * 100)}% campaign cap utilization.`;
+    const whyThisRank = `${item.badge === "govt" ? "Government Accredited" : "Platform Verified"} NGO stationed ${Math.round(dist)} km from the crisis epicenter. ${item.verifiedProofsCount} verified field deliveries on record, ${Math.round(utilization * 100)}% of campaign cap used.`;
 
     return {
       ngoId: item.ngoId,
@@ -89,18 +76,19 @@ export function rankNgosForDisaster(
       goal: item.goal,
       cap: item.cap,
       raised: item.raised,
-      distanceKm: dist,
+      distanceKm: Math.round(dist),
+      score: totalScore,
+      breakdown: { proximity, delivery, capUtilization, badgeBonus },
       scores: {
-        proximityScore,
-        deliveryRateScore: deliveryScore,
-        fundNeedScore,
-        badgeScore,
+        proximityScore: proximity,
+        deliveryRateScore: delivery,
+        fundNeedScore: capUtilization,
+        badgeScore: badgeBonus,
         totalScore,
       },
       whyThisRank,
     };
   });
 
-  // Sort descending by totalScore (closest and most verified first)
-  return scored.sort((a, b) => b.scores.totalScore - a.scores.totalScore);
+  return scored.sort((a, b) => b.score - a.score);
 }

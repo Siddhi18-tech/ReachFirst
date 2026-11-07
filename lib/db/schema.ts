@@ -54,6 +54,8 @@ export const disasters = pgTable("disasters", {
   centerLng: numeric("center_lng", { precision: 10, scale: 7 }),
   severityZones: jsonb("severity_zones").$type<FeatureCollection>(),
   severity: integer("severity").notNull().default(1), // 1=Low, 2=Moderate, 3=High, 4=Critical
+  casualties: integer("casualties").notNull().default(0),
+  teamsDeployed: integer("teams_deployed").notNull().default(0),
   sourceLink: text("source_link"),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),

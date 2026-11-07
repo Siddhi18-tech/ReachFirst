@@ -5,6 +5,7 @@ export default auth((req) => {
   const { nextUrl, auth: session } = req;
   const pathname = nextUrl.pathname;
   const role = session?.user?.role;
+  if (pathname.startsWith("/api/")) return NextResponse.next();
 
   // Public paths - always allowed
   const publicPaths = [
