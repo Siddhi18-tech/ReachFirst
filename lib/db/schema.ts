@@ -91,8 +91,9 @@ export const donations = pgTable("donations", {
   donorId: uuid("donor_id").references(() => users.id),
   campaignId: uuid("campaign_id").references(() => campaigns.id).notNull(),
   amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  tipAmount: numeric("tip_amount", { precision: 12, scale: 2 }).notNull().default("0"),
   currency: text("currency").notNull().default("USD"),
-  paypalOrderId: text("paypal_order_id"),
+  paypalOrderId: text("paypal_order_id").unique(),
   status: donationStatusEnum("status").notNull().default("pending"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   confirmedAt: timestamp("confirmed_at"),
@@ -146,6 +147,16 @@ export const reports = pgTable("reports", {
 export const processedWebhookEvents = pgTable("processed_webhook_events", {
   id: text("id").primaryKey(), // PayPal event ID
   processedAt: timestamp("processed_at").defaultNow().notNull(),
+});
+
+export const escrowDisbursements = pgTable("escrow_disbursements", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  milestoneId: uuid("milestone_id").references(() => milestones.id, { onDelete: "cascade" }).notNull(),
+  campaignId: uuid("campaign_id").references(() => campaigns.id, { onDelete: "cascade" }).notNull(),
+  amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
+  releasedBy: uuid("released_by").references(() => users.id),
+  note: text("note"),
+  releasedAt: timestamp("released_at").defaultNow().notNull(),
 });
 
 // ─── Relations ────────────────────────────────────────────────────────────────
