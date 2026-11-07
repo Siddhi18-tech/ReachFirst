@@ -85,6 +85,8 @@ export default async function DisasterRankingsPage({ params }: { params: Promise
       centerLat: "26.3216",
       centerLng: "90.9821",
       severity: 4,
+      casualties: 0,
+      teamsDeployed: 0,
       sourceLink: "https://cwc.gov.in",
       active: true,
       createdAt: new Date(),
