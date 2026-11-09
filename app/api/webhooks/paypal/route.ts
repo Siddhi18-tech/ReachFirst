@@ -14,6 +14,7 @@ async function verifyPayPalWebhook(req: NextRequest, event: unknown) {
     method: "POST",
     headers: { Authorization: `Basic ${authorization}`, "Content-Type": "application/x-www-form-urlencoded" },
     body: "grant_type=client_credentials",
+    signal: AbortSignal.timeout(10000),
   });
   if (!tokenResponse.ok) return false;
   const { access_token: accessToken } = await tokenResponse.json();
@@ -31,6 +32,7 @@ async function verifyPayPalWebhook(req: NextRequest, event: unknown) {
       webhook_id: webhookId,
       webhook_event: event,
     }),
+    signal: AbortSignal.timeout(10000),
   });
   if (!verificationResponse.ok) return false;
   const verification = await verificationResponse.json();
@@ -73,6 +75,24 @@ export async function POST(req: NextRequest) {
           FROM confirmed
           WHERE campaigns.id = confirmed.campaign_id
           RETURNING campaigns.id
+        )
+        SELECT id FROM received
+      `);
+      const rows = Array.isArray(result) ? result : result.rows;
+      if (rows.length === 0) return NextResponse.json({ status: "already_processed" });
+    } else if (eventType === "PAYMENT.CAPTURE.DENIED" && typeof orderId === "string") {
+      // Record the event once and mark a still-pending donation as failed.
+      const result = await db.execute(sql`
+        WITH received AS (
+          INSERT INTO processed_webhook_events (id) VALUES (${eventId})
+          ON CONFLICT (id) DO NOTHING
+          RETURNING id
+        ), failed AS (
+          UPDATE donations
+          SET status = 'failed'
+          WHERE paypal_order_id = ${orderId} AND status = 'pending'
+            AND EXISTS (SELECT 1 FROM received)
+          RETURNING id
         )
         SELECT id FROM received
       `);

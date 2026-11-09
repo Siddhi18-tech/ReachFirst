@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { campaigns, disasters, milestones, ngos, proofs } from "@/lib/db/schema";
 import { rankNgosForDisaster, type NgoRankingInput } from "@/lib/ranking";
 import type { RankedNgo } from "@/types/api";
+import { explainRank } from "@/lib/ai";
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -60,18 +61,30 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
     const ranked = rankNgosForDisaster(Number(d.centerLat), Number(d.centerLng), inputs);
 
-    const result: RankedNgo[] = ranked.map((r) => ({
-      ngoId: r.ngoId,
-      name: r.ngoName,
-      badge: r.badge === "govt" ? "GOVT" : "PLATFORM",
-      score: r.score,
-      breakdown: r.breakdown,
-      distanceKm: r.distanceKm,
-      campaignId: r.campaignId,
-      raised: r.raised,
-      cap: r.cap,
-      whyThisRank: r.whyThisRank,
-    }));
+        const result: RankedNgo[] = await Promise.all(
+      ranked.map(async (r, i) => ({
+        ngoId: r.ngoId,
+        name: r.ngoName,
+        badge: (r.badge === "govt" ? "GOVT" : "PLATFORM") as "GOVT" | "PLATFORM",
+        score: r.score,
+        breakdown: r.breakdown,
+        distanceKm: r.distanceKm,
+        campaignId: r.campaignId,
+        raised: r.raised,
+        cap: r.cap,
+        whyThisRank: await explainRank({
+          ngoName: r.ngoName,
+          rank: i + 1,
+          totalNgos: ranked.length,
+          score: r.score,
+          distanceKm: r.distanceKm,
+          deliveryRatePct: Math.round((r.breakdown.delivery / 30) * 100),
+          capUtilizationPct: r.cap > 0 ? Math.min(100, Math.round((r.raised / r.cap) * 100)) : 0,
+          badge: r.badge === "govt" ? "GOVT" : "PLATFORM",
+          breakdown: r.breakdown,
+        }),
+      }))
+    );
 
     return NextResponse.json(result);
   } catch (err) {
