@@ -1,15 +1,16 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-export function Card({
-  className,
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  hover?: boolean;
+}
+
+export function Card({ className, hover = false, children, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "bg-surface rounded-card border border-outline-variant/60 shadow-sm p-5",
+        "bg-white rounded-card border border-outline-variant/70 shadow-card p-5 transition-all duration-200",
+        hover && "hover:shadow-card-hover hover:border-primary/40",
         className
       )}
       {...props}
@@ -25,7 +26,7 @@ export function CardHeader({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn("mb-4 flex flex-col gap-1", className)} {...props}>
+    <div className={cn("mb-4 flex flex-col gap-1.5", className)} {...props}>
       {children}
     </div>
   );
@@ -53,10 +54,37 @@ export function CardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn("text-xs text-on-surface-variant font-normal", className)}
+      className={cn("text-sm text-on-surface-variant font-normal leading-relaxed", className)}
       {...props}
     >
       {children}
     </p>
+  );
+}
+
+export function CardContent({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("space-y-4", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+export function CardFooter({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("mt-4 pt-4 border-t border-outline-variant/60 flex items-center justify-between gap-3", className)}
+      {...props}
+    >
+      {children}
+    </div>
   );
 }

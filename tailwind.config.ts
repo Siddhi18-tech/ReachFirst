@@ -24,6 +24,7 @@ const config: Config = {
           DEFAULT: "#005c55",
           container: "#0f766e",
           "on-container": "#a3faef",
+          hover: "#00453f",
         },
         // Stitch Secondary — Warm Amber
         secondary: {
@@ -55,6 +56,17 @@ const config: Config = {
           container: "#007a33",
           "on-container": "#a1ffad",
         },
+        // Stitch Urgency / Error — Crimson Red
+        urgent: {
+          DEFAULT: "#ba1a1a",
+          container: "#ffdad6",
+          "on-container": "#93000a",
+        },
+        error: {
+          DEFAULT: "#ba1a1a",
+          container: "#ffdad6",
+          "on-container": "#93000a",
+        },
         // Surfaces
         surface: {
           DEFAULT: "#faf8ff",
@@ -74,16 +86,10 @@ const config: Config = {
         // Borders
         outline: "#6e7977",
         "outline-variant": "#bdc9c6",
-        // Error
-        error: {
-          DEFAULT: "#ba1a1a",
-          container: "#ffdad6",
-          "on-container": "#93000a",
-        },
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "ui-monospace", "monospace"],
+        sans: ["var(--font-inter)", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "JetBrains Mono", "ui-monospace", "monospace"],
       },
       borderRadius: {
         card: "0.75rem",
@@ -96,7 +102,7 @@ const config: Config = {
         modal: "0 20px 25px -5px rgba(15,23,42,0.08), 0 8px 10px -6px rgba(15,23,42,0.04)",
       },
       spacing: {
-        "gutter": "1.5rem",
+        gutter: "1.5rem",
         "gutter-sm": "1rem",
         "gutter-lg": "2rem",
       },
