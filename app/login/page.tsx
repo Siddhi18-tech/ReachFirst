@@ -133,6 +133,28 @@ function LoginForm() {
           </p>
         </div>
 
+        {/* Dedicated Role Portals Switcher */}
+        <div className="flex bg-surface-container rounded-pill p-1 border border-outline-variant/60 text-xs font-semibold justify-between">
+          <Link
+            href="/login/donor"
+            className="flex-1 py-1.5 text-center rounded-pill text-on-surface-variant hover:text-on-surface hover:bg-surface transition-all"
+          >
+            Donor Portal
+          </Link>
+          <Link
+            href="/login/ngo"
+            className="flex-1 py-1.5 text-center rounded-pill text-on-surface-variant hover:text-on-surface hover:bg-surface transition-all"
+          >
+            NGO Portal
+          </Link>
+          <Link
+            href="/login/admin"
+            className="flex-1 py-1.5 text-center rounded-pill text-on-surface-variant hover:text-on-surface hover:bg-surface transition-all"
+          >
+            Admin Console
+          </Link>
+        </div>
+
         {/* Login Card */}
         <Card className="shadow-modal border-outline-variant animate-slide-up">
           <CardHeader>

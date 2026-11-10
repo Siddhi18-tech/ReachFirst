@@ -31,8 +31,28 @@ export async function POST(req: NextRequest) {
   if (!user || !user.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const body = await req.json();
-    const parsed = applySchema.safeParse(body);
+    let rawBody: Record<string, unknown> = {};
+    const contentType = req.headers.get("content-type") || "";
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      const docsObj: Record<string, string> = {};
+      formData.forEach((value, key) => {
+        if (key.startsWith("docs.")) {
+          const docKey = key.replace("docs.", "");
+          if (typeof value === "string") docsObj[docKey] = value;
+        } else if (typeof value === "string") {
+          rawBody[key] = value;
+        }
+      });
+      if (Object.keys(docsObj).length > 0) {
+        rawBody.docs = docsObj;
+      }
+    } else {
+      rawBody = (await req.json().catch(() => ({}))) as Record<string, unknown>;
+    }
+
+    const parsed = applySchema.safeParse(rawBody);
     if (!parsed.success) {
       return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten() }, { status: 400 });
     }

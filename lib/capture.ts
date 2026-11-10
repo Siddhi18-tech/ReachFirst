@@ -30,9 +30,10 @@ export async function captureOrder(orderId: string, user: { id: string; role: st
 
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_SECRET;
+  const hasPaypal = Boolean(clientId && clientSecret && clientId !== "test");
   const isDemoOrder = orderId.startsWith("DEMO-ORDER-");
-  if (isDemoOrder && (clientId || clientSecret)) return fail(400, "Demo orders cannot be used when PayPal is configured");
-  if (!isDemoOrder && (!clientId || !clientSecret)) return fail(503, "PayPal is not configured for this order");
+  if (isDemoOrder && hasPaypal) return fail(400, "Demo orders cannot be used when PayPal is configured");
+  if (!isDemoOrder && !hasPaypal) return fail(503, "PayPal is not configured for this order");
 
   if (!isDemoOrder) {
     const token = await paypalToken(clientId!, clientSecret!);

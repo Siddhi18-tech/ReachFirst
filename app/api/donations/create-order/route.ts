@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     let paypalOrderId = `DEMO-ORDER-${crypto.randomUUID()}`;
     let approvalUrl: string | null = null;
 
-    if (clientId && clientSecret) {
+    if (clientId && clientSecret && clientId !== "test") {
       try {
         const tokenRes = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
           method: "POST",

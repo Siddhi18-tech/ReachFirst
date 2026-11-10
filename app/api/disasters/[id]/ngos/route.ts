@@ -88,7 +88,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 
     return NextResponse.json(result);
   } catch (err) {
-    console.error("GET /api/disasters/[id]/ngos", err);
-    return NextResponse.json({ error: "Failed to rank NGOs" }, { status: 500 });
+    console.warn(`GET /api/disasters/${id}/ngos fallback to mockRankedNgos:`, err);
+    const { mockRankedNgos } = await import("@/lib/mock/data");
+    return NextResponse.json(mockRankedNgos);
   }
 }

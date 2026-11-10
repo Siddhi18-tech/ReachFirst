@@ -156,6 +156,25 @@ export async function captureDonation(orderId: string): Promise<DonationSummary>
   });
 }
 
+export async function getDonationSummary(id: string): Promise<DonationSummary> {
+  if (USE_MOCK) {
+    return {
+      id,
+      amount: 1000,
+      currency: "INR",
+      status: "escrow",
+      milestones: [
+        { step: 1, label: "Payment received", done: true, at: new Date().toISOString() },
+        { step: 2, label: "Held in escrow", done: true, at: new Date().toISOString() },
+        { step: 3, label: "Field proof verified by admin", done: false },
+        { step: 4, label: "Funds released to NGO", done: false },
+      ],
+    };
+  }
+
+  return await request<DonationSummary>(`/api/donations/${id}`);
+}
+
 export async function getDonorImpact(): Promise<DonorImpactData> {
   if (USE_MOCK) return mockDonorImpact;
   try {
