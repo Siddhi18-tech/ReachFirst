@@ -9,7 +9,7 @@ export default auth((req) => {
 
   // Public paths - always allowed
   const publicPaths = [
-    "/", "/login", "/register", "/transparency", "/map", "/disasters", "/donate",
+    "/", "/login", "/register", "/not-authorized", "/transparency", "/map", "/disasters", "/donate",
     "/api/auth", "/api/webhooks/paypal", "/api/donations/create-order", "/api/donations/capture-order",
   ];
   if (publicPaths.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
@@ -24,13 +24,13 @@ export default auth((req) => {
 
   // Role-based access control
   if (pathname.startsWith("/admin") && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/not-authorized?required=admin", req.url));
   }
   if (pathname.startsWith("/ngo") && role !== "ngo" && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/not-authorized?required=ngo", req.url));
   }
   if (pathname.startsWith("/donor") && role !== "donor" && role !== "admin") {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/not-authorized?required=donor", req.url));
   }
 
   return NextResponse.next();

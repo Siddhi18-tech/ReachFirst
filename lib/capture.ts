@@ -62,8 +62,8 @@ export async function captureOrder(orderId: string, user: { id: string; role: st
       RETURNING campaign_id, amount, currency
     )
     UPDATE campaigns
-      SET raised = cast(cast(campaigns.raised as numeric) + cast(confirmed.amount as numeric) *
-            CASE WHEN confirmed.currency = 'USD' THEN 83 ELSE 1 END as text),
+      SET raised = cast(campaigns.raised as numeric) + cast(confirmed.amount as numeric) *
+            CASE WHEN confirmed.currency = 'USD' THEN 83 ELSE 1 END,
           updated_at = now()
     FROM confirmed
     WHERE campaigns.id = confirmed.campaign_id

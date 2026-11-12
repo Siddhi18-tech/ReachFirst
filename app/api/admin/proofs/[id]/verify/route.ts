@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { and, asc, eq, ne, sql } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -6,29 +6,54 @@ import { campaigns, milestones, ngos, proofs } from "@/lib/db/schema";
 import { getSessionUser, requireRole } from "@/lib/auth-guard";
 
 export async function POST(
-  _req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const denied = await requireRole("admin");
   if (denied) return denied;
+
   const admin = await getSessionUser();
   if (!admin?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  if (!z.uuid().safeParse(id).success) {
+  if (!z.string().uuid().safeParse(id).success) {
     return NextResponse.json({ error: "Invalid proof id" }, { status: 400 });
+  }
+
+  let body: { action?: unknown; note?: unknown } = {};
+  try {
+    body = await req.json();
+  } catch {
+    // accept empty body for default approve
+  }
+  const action = (body.action ?? "approve") as string;
+  const note = typeof body.note === "string" ? body.note.trim() : null;
+
+  if (action !== "approve" && action !== "reject") {
+    return NextResponse.json({ error: "action must be 'approve' or 'reject'" }, { status: 400 });
   }
 
   const [proof] = await db.select().from(proofs).where(eq(proofs.id, id)).limit(1);
   if (!proof) return NextResponse.json({ error: "Proof not found" }, { status: 404 });
 
+  if (action === "reject") {
+    await db.update(proofs).set({ verified: false }).where(eq(proofs.id, id));
+    return NextResponse.json({ ok: true, proofId: id, action: "rejected" });
+  }
+
   // Idempotent: already verified means no second release
   if (proof.verified) {
-    return NextResponse.json({ ok: true, proofId: id, alreadyVerified: true, released: null });
+    return NextResponse.json({
+      ok: true,
+      proofId: id,
+      alreadyVerified: true,
+      action: "already_verified",
+      released: null,
+    });
   }
 
   const [row] = await db
-    .select({ raised: campaigns.raised, ngoStatus: ngos.status })
+    .select({ raised: campaigns.raised, ngoStatus: ngos.status, ngoName: ngos.name })
     .from(campaigns)
     .innerJoin(ngos, eq(ngos.id, campaigns.ngoId))
     .where(eq(campaigns.id, proof.campaignId))
@@ -60,6 +85,8 @@ export async function POST(
     }
   }
 
+  const releaseNote = note ?? "Released on proof verification";
+
   // One atomic statement: verify proof, pay next milestone, record disbursement.
   // The WHERE verified = false guard makes a concurrent double-click a no-op.
   await db.execute(sql`
@@ -82,7 +109,7 @@ export async function POST(
     ),
     ins AS (
       INSERT INTO escrow_disbursements (milestone_id, campaign_id, amount, released_by, note)
-      SELECT id, campaign_id, amount, ${admin.id}::uuid, 'Released on proof verification'
+      SELECT id, campaign_id, amount, ${admin.id}::uuid, ${releaseNote}
       FROM upd
       RETURNING id
     )
@@ -97,5 +124,14 @@ export async function POST(
     }
   }
 
-  return NextResponse.json({ ok: true, proofId: id, alreadyVerified: false, released });
+  return NextResponse.json({
+    ok: true,
+    proofId: id,
+    campaignId: proof.campaignId,
+    alreadyVerified: false,
+    action: "approved",
+    released,
+    milestoneReleased: released?.milestoneId ?? null,
+    ngoName: row.ngoName ?? null,
+  });
 }
