@@ -9,7 +9,7 @@ import { formatCurrency } from "@/lib/utils";
 function DonationCheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const campaignId = searchParams.get("campaignId") || "c1111111-1111-1111-1111-111111111111";
+  const campaignId = searchParams.get("campaignId") || "a90f538a-8e14-4482-a313-09b392949673";
 
   const [amount, setAmount] = useState<number>(1000);
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -72,7 +72,8 @@ function DonationCheckoutContent() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           campaignId,
-          amount: totalAmount,
+          amount,
+          tipAmount,
           currency,
         }),
       });
