@@ -118,6 +118,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (err: unknown) {
     console.error("Proof upload error:", err);
-    return NextResponse.json({ error: "Failed to upload proof" }, { status: 500 });
+    const msg = err instanceof Error ? err.message : "Failed to upload proof";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

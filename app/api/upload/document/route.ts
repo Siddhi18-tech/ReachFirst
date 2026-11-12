@@ -54,6 +54,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url, publicId, exif }, { status: 200 });
   } catch (e) {
     console.error("Upload error:", e);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    const msg = e instanceof Error ? e.message : "Upload failed";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
