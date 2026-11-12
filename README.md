@@ -25,7 +25,7 @@
 | **FE-Phase 1** | Stitch design tokens (Tailwind v4), Inter & JetBrains Mono fonts, shared component library (`/dev/ui`) | ✅ Complete |
 | **FE-Phase 2** | Auth UI (`/login`, `/register`), 1-click demo accounts, role-based redirects, `NotAuthorized` screen | ✅ Complete |
 | **FE-Phase 3** | Home hero count-up & ledger, Live Leaflet Map (`/map`) with custom severity markers & filters, Disaster NGO ranking (`/disasters/[id]`) with 0–100 score rings & AI rationale | ✅ Complete |
-| **FE-Phase 4–6**| Checkout & confirmation, NGO portal & proof upload, Donor impact & public ledger dashboards | 🔄 Next Phase |
+| **FE-Phase 4–6**| Checkout & confirmation, NGO portal & proof upload, Donor impact & public ledger dashboards | ✅ Complete |
 
 ---
 
@@ -257,4 +257,4 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ---
 
 ## 📄 License
-This project was built for hackathon evaluation under the MIT License.
+This project was successfully completed and submitted for hackathon evaluation. Distributed under the MIT License.
