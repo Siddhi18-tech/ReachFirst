@@ -1,1 +1,2 @@
-export { POST } from "../inventory-ai/route";
+export { POST } from "../../inventory-ai/route";
+
