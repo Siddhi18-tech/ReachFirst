@@ -30,6 +30,10 @@
   --color-outline: #6e7977;
   --color-outline-variant: #bdc9c6;
 
+  --color-urgent: #ba1a1a;
+  --color-urgent-container: #ffdad6;
+  --color-urgent-on-container: #93000a;
+
   --color-error: #ba1a1a;
   --color-error-container: #ffdad6;
   --color-on-error: #ffffff;
@@ -39,8 +43,8 @@
   --radius-input: 0.5rem;
   --radius-pill: 9999px;
 
-  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace;
 }
 
 :root {
@@ -48,6 +52,10 @@
   --primary-container: #0f766e;
   --secondary: #855300;
   --secondary-container: #fea619;
+  --tertiary: #005f26;
+  --tertiary-container: #007a33;
+  --urgent: #ba1a1a;
+  --urgent-container: #ffdad6;
   --surface: #faf8ff;
   --on-surface: #131b2e;
   --outline: #6e7977;
@@ -61,7 +69,7 @@
 body {
   background-color: #faf8ff;
   color: #131b2e;
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-inter), 'Inter', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -106,6 +114,24 @@ body {
 }
 .btn-secondary:hover {
   background-color: #f2f3ff;
+}
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: #ba1a1a;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 150ms;
+  cursor: pointer;
+}
+.btn-danger:hover {
+  background-color: #93000a;
 }
 
 .card {
@@ -202,5 +228,5 @@ body {
 }
 
 .metric {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-family: var(--font-mono), 'JetBrains Mono', ui-monospace, monospace;
 }
