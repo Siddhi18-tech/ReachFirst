@@ -91,7 +91,7 @@ export default async function HomePage() {
       {/* ── 1. Hero Section ─────────────────────────────────────────────────── */}
       <section className="relative bg-gradient-to-br from-primary-900 via-primary-800 to-primary text-white overflow-hidden py-16 sm:py-24 border-b border-primary-container">
         {/* Subtle geometric pattern overlay */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#a3faef_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#9fb3c8_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
 
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl space-y-6">

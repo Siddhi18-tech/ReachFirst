@@ -76,7 +76,7 @@ export function Stepper({
               className={cn(
                 "relative z-10 w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-all duration-300 shrink-0",
                 isDone && "bg-primary text-white shadow-xs",
-                isCurrent && "bg-secondary-container text-secondary-900 ring-4 ring-secondary-container/30 shadow-xs animate-pulse-dot",
+                isCurrent && "bg-secondary-container text-secondary-on-container ring-4 ring-secondary-container/30 shadow-xs animate-pulse-dot",
                 isPending && "bg-surface-container text-outline border border-outline-variant/80"
               )}
             >

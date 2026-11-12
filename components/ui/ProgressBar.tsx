@@ -24,7 +24,7 @@ export function ProgressBar({
 
   const variantStyles = {
     primary: "bg-primary",
-    secondary: "bg-secondary-container",
+    secondary: "bg-secondary",
     tertiary: "bg-tertiary",
     urgent: "bg-urgent",
   };

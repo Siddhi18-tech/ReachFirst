@@ -143,16 +143,16 @@ export default function DisasterMap({
                 ${escapeHtml(disaster.type)}
               </span>
             </div>
-            <h4 style="margin: 0 0 6px 0; font-size: 15px; font-weight: 800; color: #131b2e; line-height: 1.25;">
+            <h4 style="margin: 0 0 6px 0; font-size: 15px; font-weight: 800; color: #0f172a; line-height: 1.25;">
               ${escapeHtml(disaster.name)}
             </h4>
-            <div style="font-size: 11px; font-family: monospace; color: #40484b; margin-bottom: 10px; display: flex; gap: 8px;">
+            <div style="font-size: 11px; font-family: monospace; color: #475569; margin-bottom: 10px; display: flex; gap: 8px;">
               <span>🚨 ${disaster.casualties || 0} casualties</span>
               <span>👥 ${disaster.teamsDeployed || 0} teams</span>
             </div>
             <a
               href="/disasters/${encodeURIComponent(disaster.id)}"
-              style="display: block; text-align: center; background-color: #005c55; color: #ffffff; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: background-color 150ms;"
+              style="display: block; text-align: center; background-color: #1e3a5f; color: #ffffff; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.15); transition: background-color 150ms;"
             >
               View NGOs & Donate &rarr;
             </a>
@@ -194,15 +194,15 @@ export default function DisasterMap({
           Crisis Severity Scale
         </p>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-urgent shrink-0 shadow-xs" />
+          <span className="w-3 h-3 rounded-full bg-[#ba1a1a] shrink-0 shadow-xs" />
           <span className="text-on-surface font-medium text-[11px]">Level 4: Critical</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-secondary shrink-0 shadow-xs" />
+          <span className="w-3 h-3 rounded-full bg-[#855300] shrink-0 shadow-xs" />
           <span className="text-on-surface font-medium text-[11px]">Level 3: High</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-primary shrink-0 shadow-xs" />
+          <span className="w-3 h-3 rounded-full bg-[#005c55] shrink-0 shadow-xs" />
           <span className="text-on-surface font-medium text-[11px]">Level 2: Moderate</span>
         </div>
       </div>

@@ -37,25 +37,25 @@ export function Badge({
   const norm = String(variant).toLowerCase();
 
   const variantStyles: Record<string, string> = {
-    // Stitch Tertiary (Govt Accredited - Forest Green)
-    govt: "bg-tertiary-container text-white border border-tertiary/40 font-semibold shadow-xs",
-    // Stitch Primary (Platform Verified - Deep Teal)
-    platform: "bg-primary-container text-white border border-primary/40 font-semibold shadow-xs",
-    // Stitch Urgency (Urgent / Level 4 Crisis - Crimson Red)
-    urgent: "bg-urgent-container text-urgent font-bold border border-urgent/30",
-    critical: "bg-urgent-container text-urgent font-bold border border-urgent/30",
-    // Stitch Secondary (High Severity / Level 3 - Warm Amber)
-    high: "bg-secondary-container text-secondary-900 font-semibold border border-secondary/30",
-    // Moderate / Level 2
-    moderate: "bg-surface-container-high text-on-surface border border-outline/30 font-medium",
-    // Low / Level 1
-    low: "bg-surface-container text-on-surface-variant border border-outline/20 font-medium",
+    // Government Accredited — Muted Sage/Forest Green
+    govt: "bg-tertiary-container text-tertiary-on-container border border-tertiary/25 font-medium shadow-2xs",
+    // Platform Verified — Deep Slate-Navy Accent
+    platform: "bg-primary-50 text-primary-800 border border-primary-200 font-medium shadow-2xs",
+    // Urgent / Critical — Soft Muted Rose-Crimson
+    urgent: "bg-urgent-container text-urgent-on-container font-semibold border border-urgent/25",
+    critical: "bg-urgent-container text-urgent-on-container font-semibold border border-urgent/25",
+    // High Severity — Soft Warm Amber
+    high: "bg-secondary-container text-secondary-on-container font-medium border border-secondary/25",
+    // Moderate / Level 2 — Soft Slate Neutral
+    moderate: "bg-surface-low text-on-surface border border-outline-variant font-medium",
+    // Low / Level 1 — Subtle Neutral
+    low: "bg-surface-low text-on-surface-variant border border-outline-variant/60 font-medium",
     // Neutral none / unbadged
-    none: "bg-surface-container-high text-on-surface-variant border border-outline-variant font-medium",
+    none: "bg-surface-low text-on-surface-variant border border-outline-variant font-medium",
     // Outline
     outline: "border border-outline text-on-surface bg-transparent font-medium",
     // Default
-    default: "bg-surface-container-high text-on-surface font-medium border border-outline-variant/60",
+    default: "bg-surface-low text-on-surface font-medium border border-outline-variant",
   };
 
   const dotColors: Record<string, string> = {
@@ -65,7 +65,7 @@ export function Badge({
     critical: "bg-urgent animate-pulse",
     high: "bg-secondary",
     moderate: "bg-slate-500",
-    low: "bg-teal-600",
+    low: "bg-slate-400",
     none: "bg-slate-400",
     outline: "bg-outline",
     default: "bg-outline",
