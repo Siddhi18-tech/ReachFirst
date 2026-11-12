@@ -26,7 +26,7 @@ const registerSchema = z
     email: z.string().email("Valid email address is required"),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
-    role: z.enum(["donor", "ngo"], { message: "Please select an account type" }),
+    role: z.enum(["donor", "ngo", "admin"], { message: "Please select an account type" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -92,9 +92,11 @@ export default function RegisterPage() {
         return;
       }
 
-      // Exact role-based destination per Phase 2 spec:
-      // Donors go to /map, NGOs to /ngo/apply
-      if (data.role === "ngo") {
+      // Exact role-based destination:
+      // Admin -> /admin, NGOs -> /ngo/apply, Donors -> /map
+      if (data.role === "admin") {
+        router.push("/admin");
+      } else if (data.role === "ngo") {
         router.push("/ngo/apply");
       } else {
         router.push("/map");
@@ -150,6 +152,7 @@ export default function RegisterPage() {
                 options={[
                   { value: "donor", label: "💝 Donor (Fund crises & track escrow releases)" },
                   { value: "ngo", label: "🏥 NGO (Deploy relief teams & submit field proof)" },
+                  { value: "admin", label: "🛡️ Platform Verifier / Admin (Audit credentials & verify NGOs)" },
                 ]}
                 error={errors.role?.message}
                 {...register("role")}
@@ -157,11 +160,18 @@ export default function RegisterPage() {
 
               {/* Informative helper banner for selected role */}
               <div className="p-3 rounded-input bg-surface-container border border-outline-variant/60 flex items-start gap-2.5 text-xs text-on-surface-variant">
-                {selectedRole === "ngo" ? (
+                {selectedRole === "admin" ? (
+                  <>
+                    <Shield className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span>
+                      Platform Administrators & Verifiers have security clearance to <strong>inspect submitted legal certificates</strong>, approve authentic NGOs, and release escrow milestones in the Admin Console.
+                    </span>
+                  </>
+                ) : selectedRole === "ngo" ? (
                   <>
                     <Building2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                     <span>
-                      NGOs will be redirected to the <strong>accreditation application</strong> immediately after registering.
+                      NGO registration initiates a <strong>pending verification status</strong>. You will be redirected to submit legal certificates (Registration, 80G/12A Tax Docs) for admin approval before receiving funds.
                     </span>
                   </>
                 ) : (
@@ -177,7 +187,7 @@ export default function RegisterPage() {
               {/* Full Name */}
               <Input
                 label="Full Name or Organisation Name"
-                placeholder={selectedRole === "ngo" ? "e.g. Rapid Relief Foundation" : "e.g. Priya Sharma"}
+                placeholder={selectedRole === "ngo" ? "e.g. Rapid Relief Foundation" : selectedRole === "admin" ? "e.g. Audit Director / Officer" : "e.g. Priya Sharma"}
                 autoComplete="name"
                 leftIcon={<User className="w-4 h-4" />}
                 error={errors.name?.message}

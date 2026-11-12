@@ -9,7 +9,7 @@ const schema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(["donor", "ngo"]),
+  role: z.enum(["donor", "ngo", "admin"]),
 });
 
 export async function POST(req: NextRequest) {

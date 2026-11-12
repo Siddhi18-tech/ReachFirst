@@ -28,19 +28,19 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const variantStyles = {
       primary:
-        "bg-primary text-white hover:bg-primary-hover shadow-sm active:translate-y-px focus-visible:ring-primary",
+        "bg-primary text-white hover:bg-primary-hover shadow-xs active:translate-y-px focus-visible:ring-primary",
       secondary:
-        "bg-secondary-container text-secondary-900 hover:opacity-90 active:translate-y-px shadow-sm focus-visible:ring-secondary",
+        "bg-secondary-container text-secondary-on-container hover:bg-secondary-200 border border-secondary-300/60 active:translate-y-px shadow-2xs focus-visible:ring-secondary",
       tertiary:
-        "bg-tertiary text-white hover:bg-tertiary-400 active:translate-y-px shadow-sm focus-visible:ring-tertiary",
+        "bg-tertiary text-white hover:opacity-90 active:translate-y-px shadow-xs focus-visible:ring-tertiary",
       outline:
-        "border border-outline-variant bg-white text-on-surface hover:bg-surface-container active:translate-y-px focus-visible:ring-primary",
+        "border border-outline-variant bg-white text-on-surface hover:bg-surface-low active:translate-y-px focus-visible:ring-primary shadow-2xs",
       ghost:
-        "text-on-surface hover:bg-surface-container/70 active:bg-surface-container focus-visible:ring-primary",
+        "text-on-surface hover:bg-surface-low active:bg-surface-container focus-visible:ring-primary",
       danger:
-        "bg-urgent text-white hover:opacity-90 active:translate-y-px shadow-sm focus-visible:ring-urgent",
+        "bg-urgent text-white hover:opacity-90 active:translate-y-px shadow-xs focus-visible:ring-urgent",
       urgent:
-        "bg-urgent text-white hover:opacity-90 active:translate-y-px shadow-sm focus-visible:ring-urgent",
+        "bg-urgent text-white hover:opacity-90 active:translate-y-px shadow-xs focus-visible:ring-urgent",
     };
 
     const sizeStyles = {
